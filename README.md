@@ -1,6 +1,7 @@
 # Data Engineering - Superstore Dataset
 
-* Michael Pheasant (mike@pheasant.co.nz)
+* Michael Pheasant
+* See exploratory data analysis in`data-eng.ipynb` ipython notebook
 
 # Source & Context
 
@@ -39,6 +40,7 @@ Sales, broken down by:
 Fact: SaleItem
 Dimensions: Customer, Product, SaleDate, MarketRegion
 
+```
             MarketRegion
                 ^
                 |
@@ -46,6 +48,7 @@ Product <- SaleItem -> Customer
                 |
                 V
             SaleDate
+```
 
 ## SaleItem Table:
     SaleItemID (RowID)
