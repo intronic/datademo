@@ -56,41 +56,83 @@ Product <- SaleItem -> Customer
             SaleDate
 ```
 
-## SaleItem Table:
-    SaleItemID (RowID)
-    CustomerID
-    ProductID
-    SaleDateID
-    MarketRegionID
-    Sales
-    Quantity
-    Discount
-    Profit
-    Shipping Cost
+## Schema DDL
 
-## SaleDate Table:
-    SaleDateID
-    SaleDate
-    SaleYear
-    SaleMonth
-    SaleISOWeekNumber
-    SaleISOWeekDay
+```sql
+-- OLAP Dimension Tables
+create table SaleDate (
+    SaleDateID          varchar not null,
+    SaleDate            date not null,
+    SaleYear            int not null,
+    SaleMonth           int not null,
+    SaleISOWeekNumber   int not null,
+    SaleISOWeekDay      int not null,
+    primary key (SaleDateID)
+);
 
-## Customer Table:
-    CustomerID
-    Segment
-    Customer Name
+create table Customer (
+    CustomerID      varchar not null,
+    Segment         varchar not null,
+    CustomerName    varchar not null,
+    primary key (CustomerID)
+);
 
-## Product Table:
-    ProductID
-    Category
-    Sub-Category
-    Product Name
+create table Product (
+    ProductID   varchar not null,
+    Category    varchar not null,
+    SubCategory varchar not null,
+    ProductName varchar not null,
+    primary key (ProductID)
+);
 
-## MarketRegion Table:
-    MarketRegionID
-    Market
-    Region
+create table MarketRegion (
+    MarketRegionID  varchar not null,
+    Market          varchar not null,
+    Region          varchar not null,
+    primary key (MarketRegionID)
+);
+
+-- OLAP Fact Tables
+create table SaleItem (
+    SaleItemID      int not null,
+    CustomerID      varchar not null,
+    ProductID       varchar not null,
+    SaleDateID      varchar not null,
+    MarketRegionID  varchar not null,
+    Sales           decimal not null,
+    Quantity        int not null,
+    Discount        decimal not null,
+    Profit          decimal not null,
+    ShippingCost    decimal not null,
+    primary key (SaleItemID)
+);
+
+-- load data (using psql)
+\copy saledate from '/home/michael/Documents/datademo/load_saledate.csv' encoding 'UTF-8' csv header ;
+-- COPY 25754
+\copy customer from '/home/michael/Documents/datademo/load_customer.csv' encoding 'UTF-8' csv header ;
+-- COPY 1590
+\copy product from '/home/michael/Documents/datademo/load_product.csv' encoding 'UTF-8' csv header ;
+-- COPY 10292
+\copy marketregion from '/home/michael/Documents/datademo/load_marketregion.csv' encoding 'UTF-8' csv header ;
+-- COPY 18
+\copy saleitem from '/home/michael/Documents/datademo/load_saleitem.csv' encoding 'UTF-8' csv header ;
+-- COPY 51290
+
+-- Add Foreign Keys
+ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_SaleDate FOREIGN KEY (SaleDateID) REFERENCES SaleDate (SaleDateID);
+ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_Customer FOREIGN KEY (CustomerID) REFERENCES Customer (CustomerID);
+ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_Product FOREIGN KEY (ProductID) REFERENCES Product (ProductID);
+ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_MarketRegion FOREIGN KEY (MarketRegionID) REFERENCES MarketRegion (MarketRegionID);
+
+-- Drop if needed
+-- ALTER TABLE SaleItem DROP CONSTRAINT fk_SaleItem_SaleDate;
+-- ALTER TABLE SaleItem DROP CONSTRAINT fk_SaleItem_Customer;
+-- ALTER TABLE SaleItem DROP CONSTRAINT fk_SaleItem_Product;
+-- ALTER TABLE SaleItem DROP CONSTRAINT fk_SaleItem_MarketRegion;
+
+```
+
 
 # Comments on data
 
