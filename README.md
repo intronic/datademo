@@ -231,6 +231,32 @@ order by d.saleyear, d.salemonth
 (48 rows)
 ```
 
+## Qry 2
+
+* Top 5 products sold during January period, along with Category and Sub-Categeory names
+
+```sql
+select p.productid, p.category, p.subcategory, p.productname, sum(s.sales)::money as total_sales
+from saleitem s
+join saledate d using (SaleDateID)
+join product p using (ProductID)
+where d.salemonth = 1
+group by p.productid, p.category, p.subcategory, p.productname
+order by total_sales desc
+fetch first 5 rows only
+;
+```
+
+```
+    productid    |    category     | subcategory |                productname                 | total_sales 
+-----------------+-----------------+-------------+--------------------------------------------+-------------
+ FUR-CH-10000027 | Furniture       | Chairs      | SAFCO Executive Leather Armchair, Black    |   $6,426.00
+ TEC-CO-10000013 | Technology      | Copiers     | Brother Fax Machine, Laser                 |   $5,733.72
+ FUR-TA-10000184 | Furniture       | Tables      | Barricks Conference Table, Fully Assembled |   $5,451.30
+ OFF-BI-10004995 | Office Supplies | Binders     | GBC DocuBind P400 Electric Binding System  |   $5,443.96
+ TEC-PH-10004583 | Technology      | Phones      | Motorola Smart Phone, Cordless             |   $5,302.94
+(5 rows)
+```
 
 # Comments on data
 
