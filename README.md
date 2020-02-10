@@ -140,6 +140,35 @@ ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_MarketRegion FOREIGN KEY (Market
 * Total sales by month for the last 4 years.
 
 ```sql
+select d.salemonth, sum(s.sales)::money as total_sales
+from saleitem s
+join saledate d using (SaleDateID)
+group by d.salemonth
+order by d.salemonth
+;
+```
+
+```
+ salemonth |  total_sales  
+-----------+---------------
+         1 |   $775,766.91
+         2 |   $722,853.17
+         3 |   $951,333.08
+         4 |   $851,617.32
+         5 |   $976,415.68
+         6 | $1,152,367.79
+         7 |   $838,743.56
+         8 | $1,247,500.81
+         9 | $1,244,139.73
+        10 | $1,120,777.47
+        11 | $1,377,651.29
+        12 | $1,383,335.11
+(12 rows)
+```
+
+* Total sales by month for _each of_ the last 4 years.
+
+```sql
 select d.saleyear, d.salemonth, sum(s.sales)::money as total_sales
 from saleitem s
 join saledate d using (SaleDateID)
@@ -202,13 +231,6 @@ order by d.saleyear, d.salemonth
 (48 rows)
 ```
 
-## Qry 2
-
-* Top 5 products sold during January period, along with Category and Sub-Categeory names
-
-```sql
-
-```
 
 # Comments on data
 
