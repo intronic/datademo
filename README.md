@@ -1,7 +1,10 @@
 # Data Engineering - Superstore Dataset
 
 * Michael Pheasant
-* See exploratory data analysis in`data-eng.ipynb` ipython notebook
+* See [exploratory data analysis](../blob/master/data-eng.ipynb)
+ ipython notebook
+ ([exploratory data analysis](data-eng.ipynb))
+
 
 # Source & Context
 
