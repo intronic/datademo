@@ -37,8 +37,13 @@ Sales, broken down by:
 
 * Develop star schema based on Sale Item (line item on an order)
 
-Fact: SaleItem
-Dimensions: Customer, Product, SaleDate, MarketRegion
+<dl>
+    <dt>Fact:</dt>
+    <dd>SaleItem</dd>
+    <dt>Dimensions:</dt>
+    <dd>Customer, Product, SaleDate, MarketRegion</dd>
+</dl>
+
 
 ```
             MarketRegion
