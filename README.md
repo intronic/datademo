@@ -366,4 +366,6 @@ order by d.SaleISOWeekNumber, m.market, m.region
     * Assume customers can buy in different markets;
     * Assume products can be sold in different markets;
     * this is all observed in the data.
-* I would prefer to use surrogate keys rather than business keys.
+* I would prefer to use surrogate keys rather than business keys for joining but did not deem it worth the effort in this case.
+* Some fact (and dimension) data is included above requirements for these queries, likewise some unneeded dimension data is excluded.
+ 
