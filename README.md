@@ -336,12 +336,29 @@ order by d.SaleISOWeekNumber, m.market, m.region
 (859 rows)
 ```
 
-# Comments on data
+# Discussion of Issues/Disadvantages with this Dimensional Model
 
-* Order IDs are not unique to a given customer and order time
-** A new composite key is built with Customer ID and Order Date to uniquely identify sales to a customer on a date in a market/region
-* Product IDs (4.4%) have conflicting names (and Sub-Category in one instance)
-** One Product Name is chosen arbitrarily
-* Assume customers can buy in different markets/regions
-* Assume products can be sold in different markets/regions
-* Would prefer to use surrogate keys rather than business keys
+## Advantages
+
+* This star schema is simple to understand, build, and use:
+    * a single fact table represents sale information;
+    * simple dimension tables are a single join away;
+    * the schema answers many common business questions.
+
+## Disadvantages
+
+* For simplicity the join keys are reusing 'business' keys - query and storage performance may be improved using surrogate keys;
+* The schema may be difficult to use to answer more complex and interesting business questions;
+* The schema is not appropriate for OLTP applications;
+* It would be interesting to compare cost, speed and usefulness with massive amounts of data over extended time periods in using different schemas and query technologies such as Google BigQuery and OLAP data warehouses.
+
+## Additional Comments on Data
+
+* Order IDs are not unique to a given customer and order time:
+** A new composite key is built with Customer ID and Order Date to uniquely identify sales to a customer on a date in a market/region.
+* Product IDs (4.4%) have conflicting names (and Sub-Category in one instance):
+** One Product Name is chosen arbitrarily.
+* Assume customers can buy in different markets/regions.
+* Assume products can be sold in different markets/regions.
+* Would prefer to use surrogate keys rather than business keys.
+
