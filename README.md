@@ -357,10 +357,13 @@ order by d.SaleISOWeekNumber, m.market, m.region
 ## Additional Comments on Data
 
 * Order IDs are not unique to a given customer and order time:
-** A new composite key is built with Customer ID and Order Date to uniquely identify sales to a customer on a date in a market/region.
+    * It seems to me that the business should require Order ID to be properly unique in this instance, maybe with some form of UUID or index-friendly time-sortable hybrid (eg SQUUID);
+    * A new composite key has been added with Customer ID and Order Date to uniquely identify sales to a customer on a date in a market/region.
 * Product IDs (4.4%) have conflicting names (and Sub-Category in one instance):
-** One Product Name is chosen arbitrarily.
-* Assume customers can buy in different markets/regions.
-* Assume products can be sold in different markets/regions.
-* Would prefer to use surrogate keys rather than business keys.
-
+    * The names don't appear to be simply alternate equivalent products, nor data-entry typos corrected over time, nor different product names over time, but they generally seem to be similar products;
+    * Therefore, a single Product Name is chosen arbitrarily for each ID.
+* Market/region mostly independent of product & customer:
+    * Assume customers can buy in different markets;
+    * Assume products can be sold in different markets;
+    * this is all observed in the data.
+* I would prefer to use surrogate keys rather than business keys.
