@@ -277,7 +277,7 @@ order by d.SaleISOWeekNumber, m.market, m.region
 ;
 ```
 
-* _Note: Results show the first 2 and last 1 month for brevity (859 rows total)_
+* _Note: Results show the first 2 and last 1 week for brevity (859 rows total)_
 
 ```
  week | market |     region     | weekend_total_sales 
