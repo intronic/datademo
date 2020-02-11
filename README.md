@@ -1,7 +1,7 @@
 # Data Engineering - Superstore Dataset
 
 * Author: Michael Pheasant
-* See [exploratory data analysis](data-eng.ipynb)
+* See [exploratory data analysis](../master/data-eng.ipynb)
  ipython notebook for ETL results
 
 # Source & Context
