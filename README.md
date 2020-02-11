@@ -234,6 +234,7 @@ order by d.saleyear, d.salemonth
 ## Qry 2
 
 * Top 5 products sold during January period, along with Category and Sub-Categeory names
+* _(I assume over all years)_
 
 ```sql
 select p.productid, p.category, p.subcategory, p.productname, sum(s.sales)::money as total_sales
@@ -256,6 +257,83 @@ fetch first 5 rows only
  OFF-BI-10004995 | Office Supplies | Binders     | GBC DocuBind P400 Electric Binding System  |   $5,443.96
  TEC-PH-10004583 | Technology      | Phones      | Motorola Smart Phone, Cordless             |   $5,302.94
 (5 rows)
+```
+
+## Qry 3
+
+* Total quantity sales for Weekends by Region by Week
+* _(I assume over all years)_
+
+```sql
+select d.SaleISOWeekNumber as Week, m.market, m.region, sum(s.sales)::money as weekend_total_sales
+from saleitem s
+join saledate d using (SaleDateID)
+join marketregion m using (MarketRegionID)
+where d.SaleISOWeekDay >= 6 -- 6=sat, 7=sun
+group by d.SaleISOWeekNumber, m.market, m.region
+order by d.SaleISOWeekNumber, m.market, m.region
+;
+```
+
+* _Note: Results show the first 2 and last 1 month for brevity (859 rows total)_
+
+```
+ week | market |     region     | weekend_total_sales 
+------+--------+----------------+---------------------
+    1 | Africa | Africa         |           $2,605.38
+    1 | APAC   | Central Asia   |          $10,792.05
+    1 | APAC   | North Asia     |          $10,881.07
+    1 | APAC   | Oceania        |           $3,617.90
+    1 | APAC   | Southeast Asia |           $2,703.18
+    1 | Canada | Canada         |             $346.59
+    1 | EMEA   | EMEA           |           $2,873.52
+    1 | EU     | Central        |          $10,059.96
+    1 | EU     | North          |           $9,605.47
+    1 | EU     | South          |             $808.41
+    1 | LATAM  | Caribbean      |           $4,104.11
+    1 | LATAM  | Central        |             $637.02
+    1 | LATAM  | North          |             $438.78
+    1 | LATAM  | South          |           $2,776.97
+    1 | US     | Central        |             $605.16
+    1 | US     | East           |           $2,218.90
+    1 | US     | South          |           $4,318.13
+    1 | US     | West           |           $1,519.48
+    2 | Africa | Africa         |           $3,103.34
+    2 | APAC   | Central Asia   |           $1,279.35
+    2 | APAC   | Oceania        |             $403.65
+    2 | APAC   | Southeast Asia |           $5,767.75
+    2 | Canada | Canada         |           $1,561.47
+    2 | EMEA   | EMEA           |           $1,227.31
+    2 | EU     | Central        |           $3,811.73
+    2 | EU     | North          |              $16.50
+    2 | EU     | South          |              $58.98
+    2 | LATAM  | Caribbean      |             $543.64
+    2 | LATAM  | Central        |             $617.86
+    2 | LATAM  | North          |             $817.60
+    2 | LATAM  | South          |           $1,082.24
+    2 | US     | Central        |           $1,556.22
+    2 | US     | East           |           $4,171.63
+    2 | US     | South          |           $2,597.58
+    2 | US     | West           |              $25.83
+   ...
+   52 | Africa | Africa         |           $2,568.81
+   52 | APAC   | Central Asia   |           $1,255.04
+   52 | APAC   | North Asia     |             $997.68
+   52 | APAC   | Oceania        |           $3,392.58
+   52 | APAC   | Southeast Asia |           $2,256.80
+   52 | EMEA   | EMEA           |           $1,771.31
+   52 | EU     | Central        |           $5,353.85
+   52 | EU     | North          |           $2,520.56
+   52 | EU     | South          |             $213.73
+   52 | LATAM  | Caribbean      |              $86.67
+   52 | LATAM  | Central        |           $3,203.84
+   52 | LATAM  | North          |           $1,294.89
+   52 | LATAM  | South          |           $1,077.42
+   52 | US     | Central        |           $1,817.78
+   52 | US     | East           |           $4,894.86
+   52 | US     | South          |               $2.61
+   52 | US     | West           |           $4,038.11
+(859 rows)
 ```
 
 # Comments on data
