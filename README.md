@@ -2,7 +2,7 @@
 
 * Author: Michael Pheasant
 * See [exploratory data analysis](data-eng.ipynb)
- ipython notebook
+ ipython notebook for ETL results
 
 # Source & Context
 
