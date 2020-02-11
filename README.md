@@ -1,6 +1,6 @@
 # Data Engineering - Superstore Dataset
 
-* Michael Pheasant
+* Author: Michael Pheasant
 * See [exploratory data analysis](data-eng.ipynb)
  ipython notebook
 
