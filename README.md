@@ -56,7 +56,9 @@ Product <- SaleItem -> Customer
             SaleDate
 ```
 
-## Schema DDL
+## Schema DDL 
+
+* PostgresQL v12 DB on linux
 
 ```sql
 -- OLAP Dimension Tables
