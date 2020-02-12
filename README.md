@@ -6,7 +6,7 @@
 
 # Source & Context
 
-* https://www.kaggle.com/jr2ngb/superstore-data
+* www.kaggle.com/jr2ngb/superstore-data
 * Retail dataset of a global superstore for 4 years.
 
 # Requirements: Queries
