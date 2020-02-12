@@ -410,7 +410,7 @@ order by d.SaleISOWeekNumber, m.market, m.region
 >```
 >
 
-# Discussion of Issues/Disadvantages with this Dimensional Model
+# Discussion of Issues/Disadvantages with this Star Schema Model
 
 ## Advantages
 
@@ -425,7 +425,12 @@ order by d.SaleISOWeekNumber, m.market, m.region
 * The schema may be difficult to use to answer more complex and interesting business questions;
 * The schema is not appropriate for OLTP applications.
 
-It would be interesting to compare cost, speed and usefulness with massive amounts of data over extended time periods in using different schemas and query technologies such as Google BigQuery and OLAP data warehouses.
+## BigQuery
+
+* The single table in BigQuery was proposed simply as a discussion point:
+    * the star schema solution can be partly implemented in the one table for example as arrays of structs within the table, but also with join tables.
+* The BigQuery serverless model changes the way performance, storage and cost are considered in comparison with traditional RDBMS systems.
+* It would be interesting to compare cost, speed and usefulness with massive amounts of data over extended time periods in using different schemas and query technologies.
 
 ## Additional Comments on Data and Design
 
