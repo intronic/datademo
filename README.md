@@ -26,15 +26,15 @@
 * Total quantity sales for weekends by region by week.
 * Dimensions: (region, week, weekday, sales)
 
-# Dimensions of interest
+# Dimensions of Interest
 
-Sales, broken down by: 
-* time: month, year, week, weekday
-* customer
-* region
-* product, category, sub-category
+**Sales**, broken down by: 
+* time: month, year, week, weekday;
+* customer;
+* region;
+* product, category, sub-category.
 
-# Solution: OLAP Star Schema
+# Solution: OLAP Star Schema - PostgresQL v12 DB on Linux
 
 * Develop star schema based on Sale Item (line item on an order)
 
@@ -56,9 +56,7 @@ Product <- SaleItem -> Customer
             SaleDate
 ```
 
-## Schema DDL 
-
-* PostgresQL v12 DB on linux
+## SQL Schema DDL 
 
 ```sql
 -- OLAP Dimension Tables
@@ -135,6 +133,50 @@ ALTER TABLE SaleItem ADD CONSTRAINT fk_SaleItem_MarketRegion FOREIGN KEY (Market
 
 ```
 
+## Alternate Solution - Table in BigQuery
+
+* Using Google Cloud Platform (GCP) BigQuery.
+
+### BigQuery Schema (using Python)
+
+```python
+# BigQuery Schema for SuperstoreSales table:
+schema=[
+    bigquery.SchemaField("RowID", "INT64"),
+    bigquery.SchemaField("Sales", "NUMERIC"),
+    bigquery.SchemaField("SaleDateID", "STRING"),
+    bigquery.SchemaField("SaleYear", "INT64"),
+    bigquery.SchemaField("SaleMonth", "INT64"),
+    bigquery.SchemaField("SaleDate", "DATE"),
+    bigquery.SchemaField("SaleISOWeekNumber", "INT64"),
+    bigquery.SchemaField("SaleISOWeekDay", "INT64"),
+    bigquery.SchemaField("ProductID", "STRING"),
+    bigquery.SchemaField("Category", "STRING"),
+    bigquery.SchemaField("SubCategory", "STRING"),
+    bigquery.SchemaField("ProductName", "STRING"),
+    bigquery.SchemaField("MarketRegionID", "STRING"),
+    bigquery.SchemaField("Market", "STRING"),
+    bigquery.SchemaField("Region", "STRING")
+]
+
+client = bigquery.Client()
+job = client.load_table_from_dataframe(
+    df[['RowID', 'Sales', 
+        'SaleDateID', 'SaleYear', 'SaleMonth', 'SaleDate', 'SaleISOWeekNumber', 'SaleISOWeekDay', 
+        'ProductID', 'Category', 'SubCategory', 'ProductName', 
+        'MarketRegionID', 'Market', 'Region'
+        ]],
+    'superstore_data.SuperstoreSales', 
+    job_config=bigquery.LoadJobConfig(
+        schema=schema,
+        write_disposition='WRITE_TRUNCATE',
+        encoding='UTF-8'
+    )
+)
+# Wait for the load job to complete.
+res = job.result()
+```
+
 # Query Results
 
 ## Qry 1
@@ -167,6 +209,15 @@ order by d.salemonth
         12 | $1,383,335.11
 (12 rows)
 ```
+
+> BigQuery version:
+> ```sql
+> select SaleMonth, sum(Sales) as Total_Sales
+> from superstore_data.SuperstoreSales
+> group by SaleMonth
+> order by SaleMonth
+> ```
+>
 
 * Total sales by month for _each of_ the last 4 years.
 
@@ -236,7 +287,7 @@ order by d.saleyear, d.salemonth
 ## Qry 2
 
 * Top 5 products sold during January period, along with Category and Sub-Categeory names
-* _(I assume over all years)_
+    * _(I assume over all years)_
 
 ```sql
 select p.productid, p.category, p.subcategory, p.productname, sum(s.sales)::money as total_sales
@@ -261,10 +312,21 @@ fetch first 5 rows only
 (5 rows)
 ```
 
+> BigQuery version:
+> ```sql
+> select ProductID, Category, SubCategory, ProductName, sum(Sales) as Total_Sales
+> from superstore_data.SuperstoreSales
+> where SaleMonth = 1
+> group by ProductID, Category, SubCategory, ProductName
+> order by Total_Sales desc
+> limit 5
+> ```
+>
+
 ## Qry 3
 
 * Total quantity sales for Weekends by Region by Week
-* _(I assume over all years)_
+    * _(I assume over all years)_
 
 ```sql
 select d.SaleISOWeekNumber as Week, m.market, m.region, sum(s.sales)::money as weekend_total_sales
@@ -338,6 +400,16 @@ order by d.SaleISOWeekNumber, m.market, m.region
 (859 rows)
 ```
 
+> BigQuery version:
+> ```sql
+> select SaleISOWeekNumber as Week, Market, Region, sum(Sales) as Weekend_Total_Sales
+> from superstore_data.SuperstoreSales
+> where SaleISOWeekDay >= 6
+> group by SaleISOWeekNumber, MarketRegionID, Market, Region
+> order by SaleISOWeekNumber, MarketRegionID, Market, Region
+>```
+>
+
 # Discussion of Issues/Disadvantages with this Dimensional Model
 
 ## Advantages
@@ -351,10 +423,11 @@ order by d.SaleISOWeekNumber, m.market, m.region
 
 * For simplicity the join keys are reusing 'business' keys - query and storage performance may be improved using surrogate keys;
 * The schema may be difficult to use to answer more complex and interesting business questions;
-* The schema is not appropriate for OLTP applications;
-* It would be interesting to compare cost, speed and usefulness with massive amounts of data over extended time periods in using different schemas and query technologies such as Google BigQuery and OLAP data warehouses.
+* The schema is not appropriate for OLTP applications.
 
-## Additional Comments on Data
+It would be interesting to compare cost, speed and usefulness with massive amounts of data over extended time periods in using different schemas and query technologies such as Google BigQuery and OLAP data warehouses.
+
+## Additional Comments on Data and Design
 
 * Order IDs are not unique to a given customer and order time:
     * It seems to me that the business should require Order ID to be properly unique in this instance, maybe with some form of UUID or index-friendly time-sortable hybrid (eg SQUUID);
@@ -366,6 +439,6 @@ order by d.SaleISOWeekNumber, m.market, m.region
     * Assume customers can buy in different markets;
     * Assume products can be sold in different markets;
     * this is all observed in the data.
-* I would prefer to use surrogate keys rather than business keys for joining but did not deem it worth the effort in this case.
-* Some fact (and dimension) data is included above requirements for these queries, likewise some unneeded dimension data is excluded.
+* I would prefer to use surrogate keys rather than business keys for joining but did not for simplicity.
+* Some data is included in the schema over and above requirements for these queries, likewise some unneeded data is excluded.
  
